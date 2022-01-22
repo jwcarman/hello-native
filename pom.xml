@@ -22,6 +22,7 @@
 		<jacoco.version>0.8.7</jacoco.version>
 		<spring-native.version>0.11.1</spring-native.version>
 
+		<spring-boot.build-image.imageName>docker.io/jwcarman/hello-native:${project.version}</spring-boot.build-image.imageName>
 	</properties>
 	<dependencies>
 		<dependency>
