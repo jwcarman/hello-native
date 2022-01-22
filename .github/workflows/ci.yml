@@ -1,0 +1,30 @@
+name: Continuous Integration
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Continuous Integration Build
+    outputs:
+      image: ${{ steps.image.outputs.image_name }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Cache Maven repository
+        uses: actions/cache@v2
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: 11
+      - name: Build and Test
+        run: mvn -P ci-build -B -Drevision=$GITHUB_RUN_NUMBER verify
+      - name: Create Image
+        run: mvn -P ci-build -DskipTests -Drevision=$GITHUB_RUN_NUMBER spring-boot:build-image
